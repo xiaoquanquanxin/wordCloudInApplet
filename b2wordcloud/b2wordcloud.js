@@ -109,43 +109,44 @@
                 return obj1;
             }
 
-            // https://github.com/timdream/wordcloud2.js/blob/c236bee60436e048949f9becc4f0f67bd832dc5c/index.js#L233
+            //  ✅，计算边缘
             function updateCanvasMask(shapeCanvas, maskCanvas) {
-                /* Determine bgPixel by creating
-                another canvas and fill the specified background color. */
-                var bctx = document.createElement('canvas').getContext('2d');
-
-                bctx.fillStyle = '#ffffff';
-                bctx.fillRect(0, 0, 1, 1);
-                var bgPixel = bctx.getImageData(0, 0, 1, 1).data;
-
+                var bgPixel = [255, 255, 255, 255,]
+                console.log('bgPixel', bgPixel);
                 var maskCanvasScaled = document.createElement('canvas');
                 maskCanvasScaled.width = maskCanvas.width;
                 maskCanvasScaled.height = maskCanvas.height;
                 var ctx = maskCanvasScaled.getContext('2d');
 
                 ctx.drawImage(shapeCanvas, 0, 0, shapeCanvas.width, shapeCanvas.height, 0, 0, maskCanvasScaled.width, maskCanvasScaled.height);
+                console.log('shapeCanvas是图形一样大的canvas', shapeCanvas)
+                console.log('maskCanvas是用户期望的大小', maskCanvas)
+                console.log('这里是把图形拉伸或压缩到和用户期望的大小一样')
+                console.log(maskCanvas);
 
+                //  创建一个新的、空的
                 var imageData = ctx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
                 var newImageData = ctx.createImageData(imageData);
                 for (var i = 0; i < imageData.data.length; i += 4) {
+                    //  不透明度
+                    newImageData.data[i + 3] = 255;
                     if (imageData.data[i + 3] > 128) {
-                        newImageData.data[i] = bgPixel[0];
-                        newImageData.data[i + 1] = bgPixel[1];
-                        newImageData.data[i + 2] = bgPixel[2];
-                        newImageData.data[i + 3] = bgPixel[3];
+                        //  最后就是取这个白色的部分
+                        newImageData.data[i] = newImageData.data[i + 1] = newImageData.data[i + 2] = 255;
                     } else {
-                        // This color must not be the same w/ the bgPixel.
-                        newImageData.data[i] = bgPixel[0];
-                        newImageData.data[i + 1] = bgPixel[1];
-                        newImageData.data[i + 2] = bgPixel[2];
-                        newImageData.data[i + 3] = bgPixel[3] ? bgPixel[3] - 1 : 0;
+                        //  而黑色的部分就不取了
+                        newImageData.data[i] = newImageData.data[i + 1] = newImageData.data[i + 2] = 0;
                     }
                 }
                 ctx.putImageData(newImageData, 0, 0);
                 ctx = maskCanvas.getContext('2d');
                 ctx.drawImage(maskCanvasScaled, 0, 0);
+                console.log('这里就是取个反',maskCanvasScaled)
+                document.body.appendChild(maskCanvasScaled)
+                return
                 maskCanvasScaled = ctx = imageData = newImageData = bctx = bgPixel = undefined;
+
+
             }
 
             var B2wordcloud = exports.B2wordcloud = function () {
@@ -202,6 +203,7 @@
                     }
                 }, {
                     key: '_setCanvasSize',
+                    //  ✅设置为用户控制的大小
                     value: function _setCanvasSize() {
                         var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this._container;
 
@@ -216,11 +218,11 @@
                     key: '_setOptions',
                     value: function _setOptions() {
                         this._fixWeightFactor(this._options);
-                        //  todo
                         this._maskImage();
                     }
                 }, {
                     key: '_maskImage',
+                    //  ✅计算折罩
                     value: function _maskImage() {
                         var _this2 = this;
 
@@ -252,19 +254,18 @@
                             }
 
                             ctx.putImageData(newImageData, 0, 0);
-                            debugger
                             _this2._render();
                         };
                     }
                 }, {
                     key: '_render',
                     value: function _render() {
-                        var isResize = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-                        if (this._maskImg) {
-                            updateCanvasMask(this._shapeCanvas, this._maskCanvas);
-                        }
-                        this._wordcloud2 = new WordCloud(this._options.renderer === 'canvas' ? this._container : [this._tempCanvas, this._container], this._options, this._maskCanvas, isResize);
+                        const isResize = false;
+                        updateCanvasMask(this._shapeCanvas, this._maskCanvas);
+                        debugger
+                        this._wordcloud2 = new WordCloud(
+                            this._container,
+                            this._options, this._maskCanvas, false);
                     }
                 }, {
                     key: '_fixWeightFactor',
@@ -310,25 +311,6 @@
                             }
                         }
                     }
-                }, {
-                    key: 'resize',
-                    value: function resize() {
-                        if (this._options.renderer === 'canvas') {
-                            this._setCanvasSize();
-                        } else if (this._options.renderer === 'div') {
-                            this._container.textContent = '';
-                        }
-                        if (this._maskCanvas) {
-                            this._setCanvasSize(this._maskCanvas);
-                        }
-                        this._render();
-                    }
-                    /**
-                     *
-                     * @param {object} params 事件参数
-                     *
-                     */
-
                 }, {
                     key: 'dispatchAction',
                     value: function dispatchAction(params) {

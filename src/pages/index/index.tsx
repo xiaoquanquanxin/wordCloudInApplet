@@ -1,51 +1,33 @@
-import { View } from "@tarojs/components";
+import { Canvas, View } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useEffect, useState } from "react";
-import logoImg from "../../assets/logo.png";
+import { calcCanvas, loadImage, renderText } from "../../utils/core";
+
 import "./index.scss";
 
-const loadImage = (
-  canvas: any,
-  ctx: CanvasRenderingContext2D,
-  w: number,
-  h: number
-) => {
-  const image = canvas.createImage();
-  image.src = logoImg;
-
-  image.onload = () => {
-    // 将图片绘制到 canvas 上
-    ctx.drawImage(image, 0, 0, w, h);
-  };
-};
-
-const CanvasJob = () => {
+const IndexPage = () => {
   const [imgInfo, setImgInfo] = useState();
   useEffect(() => {}, []);
   useEffect(() => {
     console.clear();
-    console.log(logoImg);
     Taro.nextTick(() => {
       wx.createSelectorQuery()
-        .select("#chart")
+        .select("#chart-temp")
         .fields({ node: true, size: true })
-        .exec(res => {
+        .exec(async res => {
           const canvas = res[0].node;
-          const ctx = canvas.getContext("2d");
-          const dpr = wx.getSystemInfoSync().pixelRatio;
-          canvas.width = res[0].width * dpr;
-          canvas.height = res[0].height * dpr;
-          ctx.scale(dpr, dpr);
-          console.log("imgInfo---", imgInfo);
-          loadImage(canvas, ctx, res[0].width, res[0].height);
+          const ctx = calcCanvas(canvas);
+          await loadImage(canvas, ctx, canvas.width, canvas.height);
+          renderText(canvas, ctx, "一二三四五十");
         });
     });
   }, []);
   return (
     <View>
-      <canvas type="2d" className={"chart"} canvas-id={"chart"} id={"chart"} />
+      {/*<Canvas type="2d" className={"chart"} id={"chart"}/>*/}
+      <Canvas type="2d" className={"chart"} id={"chart-temp"} />
     </View>
   );
 };
 
-export default CanvasJob;
+export default IndexPage;
