@@ -1,5 +1,6 @@
 {
-  "name": "Check-v4-miniapp",
+  "name": "word-cloud-in-applet",
+  "keywords": ["小程序","词云图","小程序词云图"],
   "version": "1.0.0",
   "private": true,
   "description": "",
@@ -19,7 +20,7 @@
     "build:rn": "taro build --type rn",
     "build:qq": "taro build --type qq",
     "build:quickapp": "taro build --type quickapp",
-    "dev:weapp": "NODE_ENV=development npm run build:weapp -- --watch",
+    "dev:weapp": "npm run build:weapp -- --watch",
     "dev:swan": "npm run build:swan -- --watch",
     "dev:alipay": "npm run build:alipay -- --watch",
     "dev:tt": "npm run build:tt -- --watch",
