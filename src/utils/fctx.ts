@@ -16,11 +16,7 @@ const getTextGradient = (ctx, fontHeight): void => {
 };
 
 //  计算文本大小
-const getFontSize = (
-  text: string,
-  fontSize: number,
-  fontFamily: string
-): { fontWidth: number; fontHeight: number } => {
+const getFontSize = (text: string, fontSize: number, fontFamily: string): { fontWidth: number; fontHeight: number } => {
   //  测绘用的
   const fctx = Taro.createCanvasContext("ncaa", { willReadFrequently: true });
   fctx.font = `${fontSize}px ${fontFamily}`;
@@ -36,10 +32,7 @@ const getFontSize = (
 };
 
 //  计算文本盒子尺寸
-const getFontBoxSie = (
-  fontWidth: number,
-  fontHeight: number
-): { boxWidth: number; boxHeight: number } => {
+const getFontBoxSie = (fontWidth: number, fontHeight: number): { boxWidth: number; boxHeight: number } => {
   //  盒子宽度
   const boxWidth = ((fontWidth + grid + 2) * pixelRatio) | 0;
   //  盒子高度
@@ -51,11 +44,7 @@ const getFontBoxSie = (
 };
 
 //  与文字相关的canvas上下文
-const renderText = (
-  canvas: HTMLCanvasElement,
-  text: string,
-  setTextChartSize: Dispatch<SetStateAction<{ width: number; height: number }>>
-) => {
+const renderText = (canvas: HTMLCanvasElement, text: string, setTextChartSize: Dispatch<SetStateAction<{ width: number; height: number }>>) => {
   const fontSize = 20;
   const fontFamily = "Arial";
   //  计算文本大小

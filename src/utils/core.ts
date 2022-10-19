@@ -1,25 +1,17 @@
 import logoImg from "../assets/logo.png";
 
 //  映射图片成为底图
-const mapImageData = (
-  ctx: CanvasRenderingContext2D,
-  imageData: ImageData
-): ImageData => {
+const mapImageData = (ctx: CanvasRenderingContext2D, imageData: ImageData): ImageData => {
   const newImageData = ctx.createImageData(imageData);
   for (let i = 0; i < imageData.data.length; i += 4) {
-    const tone =
-      imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2];
+    const tone = imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2];
     const alpha = imageData.data[i + 3];
     //  todo  这里直接取反了
     if (alpha < 128 || tone > 128 * 3) {
-      newImageData.data[i] = newImageData.data[i + 1] = newImageData.data[
-        i + 2
-      ] = 0;
+      newImageData.data[i] = newImageData.data[i + 1] = newImageData.data[i + 2] = 0;
       newImageData.data[i + 3] = 255;
     } else {
-      newImageData.data[i] = newImageData.data[i + 1] = newImageData.data[
-        i + 2
-      ] = 255;
+      newImageData.data[i] = newImageData.data[i + 1] = newImageData.data[i + 2] = 255;
       newImageData.data[i + 3] = 255;
     }
   }
@@ -28,12 +20,7 @@ const mapImageData = (
 };
 
 //  加载图片
-const loadImage = async (
-  canvas: any,
-  ctx: CanvasRenderingContext2D,
-  w: number,
-  h: number
-): Promise<ImageData> => {
+const loadImage = async (canvas: any, ctx: CanvasRenderingContext2D, w: number, h: number): Promise<ImageData> => {
   return new Promise(resolve => {
     const image = canvas.createImage();
     image.src = logoImg;
