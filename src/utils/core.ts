@@ -47,21 +47,6 @@ const loadImage = async (
   });
 };
 
-//  输出文字
-const renderText = (
-  canvas: any,
-  ctx: CanvasRenderingContext2D,
-  text: string
-) => {
-  ctx.font = "100px Arial";
-  const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-  gradient.addColorStop(0, "orange");
-  gradient.addColorStop(0.3, "blue");
-  gradient.addColorStop(1, "red");
-  ctx.fillStyle = gradient;
-  ctx.fillText(text, 10, 100);
-};
-
 //  计算canvas宽度通过dpr
 const calcCanvas = (canvas: any): CanvasRenderingContext2D => {
   const ctx = canvas.getContext("2d");
@@ -72,4 +57,4 @@ const calcCanvas = (canvas: any): CanvasRenderingContext2D => {
   return ctx;
 };
 
-export { calcCanvas, renderText, loadImage };
+export { calcCanvas, loadImage };
