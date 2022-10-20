@@ -141,7 +141,7 @@
                 ctx.putImageData(newImageData, 0, 0);
                 ctx = maskCanvas.getContext('2d');
                 ctx.drawImage(maskCanvasScaled, 0, 0);
-                console.log('这里就是取个反',maskCanvasScaled)
+                console.log('这里就是取个反', maskCanvasScaled)
                 document.body.appendChild(maskCanvasScaled)
                 return
                 maskCanvasScaled = ctx = imageData = newImageData = bctx = bgPixel = undefined;
@@ -270,8 +270,8 @@
                 }, {
                     key: '_fixWeightFactor',
                     value: function _fixWeightFactor(option) {
-                        option.maxFontSize = typeof option.maxFontSize === 'number' ? option.maxFontSize : 36;
-                        option.minFontSize = typeof option.minFontSize === 'number' ? option.minFontSize : 6;
+                        option.maxFontSize = 24
+                        option.minFontSize = 2;
                         if (option.list && option.list.length > 0) {
                             var min = Number(option.list[0][1]);
                             var max = 0;
@@ -286,10 +286,10 @@
                             }
                             console.log('min', min)
                             console.log('max', max)
-                            //使用linerMap计算词云大小
+                            //  映射最大最小值大关系
                             if (max > min) {
+                                //  ❤️❤️❤️❤️❤️❤️
                                 option.weightFactor = function (val) {
-                                    debugger
                                     var subDomain = max - min;
                                     var subRange = option.maxFontSize - option.minFontSize;
                                     if (subDomain === 0) {
@@ -504,15 +504,11 @@
                     };
 
                     var WordCloud = function WordCloud(elements, options, maskCanvas) {
-                        if (!isSupported) {
-                            return;
-                        }
-
                         if (!Array.isArray(elements)) {
                             elements = [elements];
                         }
                         // 获取像素比
-                        var getPixelRatio = function getPixelRatio(context) {
+                        const getPixelRatio = function getPixelRatio(context) {
                             var backingStore = context.backingStorePixelRatio || context.webkitBackingStorePixelRatio || context.mozBackingStorePixelRatio || context.msBackingStorePixelRatio || context.oBackingStorePixelRatio || context.backingStorePixelRatio || 1;
                             return (window.devicePixelRatio || 1) / backingStore;
                         };
@@ -544,7 +540,7 @@
                             clearCanvas: true,
                             backgroundColor: '#fff', // opaque white = rgba(255, 255, 255, 1)
 
-                            gridSize: 8,
+                            gridSize: 4,
                             drawOutOfBound: false,
                             origin: null,
 
@@ -578,6 +574,7 @@
                         _this.words = [];
                         _this.elements = elements;
 
+                        //  更新参数 属性
                         if (options) {
                             for (var key in options) {
                                 if (key in settings) {
@@ -586,6 +583,7 @@
                             }
                         }
 
+
                         /* Convert weightFactor into a function */
                         if (typeof settings.weightFactor !== 'function') {
                             var factor = settings.weightFactor;
@@ -593,6 +591,7 @@
                                 return pt * factor; //in px
                             };
                         }
+
 
                         /* Convert shape into a function */
                         if (typeof settings.shape !== 'function') {
@@ -675,8 +674,9 @@
                             }
                         }
 
-                        /* Make sure gridSize is a whole number and is not smaller than 4px */
+                        //  栅格，栅格间距
                         settings.gridSize = Math.max(Math.floor(settings.gridSize), 4);
+
 
                         /* shorthand */
                         var g = settings.gridSize;
@@ -687,53 +687,26 @@
                         var rotationSteps = Math.abs(Math.floor(settings.rotationSteps));
                         var minRotation = Math.min(settings.maxRotation, settings.minRotation);
 
-                        /* information/object available to all functions, set when start() */
-                        var grid, // 2d array containing filling information
-                            ngx, ngy, // width and height of the grid
-                            center, // position of the center of the cloud
+                        /* 所有函数可用的信息/对象，在start()时设置 */
+                        var grid, // 包含填充信息的2d数组
+                            ngx, ngy, // 网格的宽度和高度
+                            center, // 云中心的位置
                             maxRadius;
 
-                        /* timestamp for measuring each putWord() action */
+                        /* 用于测量每个putWord()操作的时间戳 */
                         var escapeTime;
 
-                        /* function for getting the color of the text */
+                        /* 函数获取文本的颜色 */
                         var getTextColor;
 
-                        function random_hsl_color(min, max) {
-                            return 'hsl(' + (Math.random() * 360).toFixed() + ',' + (Math.random() * 30 + 70).toFixed() + '%,' + (Math.random() * (max - min) + min).toFixed() + '%)';
-                        }
-
-                        switch (settings.color) {
-                            case 'random-dark':
-                                getTextColor = function getRandomDarkColor() {
-                                    return random_hsl_color(10, 50);
-                                };
-                                break;
-
-                            case 'random-light':
-                                getTextColor = function getRandomLightColor() {
-                                    return random_hsl_color(50, 90);
-                                };
-                                break;
-
-                            default:
-                                if (typeof settings.color === 'function') {
-                                    getTextColor = settings.color;
-                                }
-                                break;
-                        }
 
                         /* function for getting the font-weight of the text */
                         var getTextFontWeight;
-                        if (typeof settings.fontWeight === 'function') {
-                            getTextFontWeight = settings.fontWeight;
-                        }
+
 
                         /* function for getting the classes of the text */
                         var getTextClasses = null;
-                        if (typeof settings.classes === 'function') {
-                            getTextClasses = settings.classes;
-                        }
+
 
                         /* Interactive */
                         var interactive = false;
@@ -741,6 +714,7 @@
                         var hovered;
 
                         var getInfoGridFromMouseTouchEvent = function getInfoGridFromMouseTouchEvent(evt) {
+                            debugger
                             var canvas = evt.currentTarget;
                             var rect = canvas.getBoundingClientRect();
                             var clientX;
@@ -789,9 +763,11 @@
                             evt.preventDefault();
                         };
 
-                        /* Get points on the grid for a given radius away from the center */
+                        //  ⚠️⚠️⚠️⚠️🏁🏁🏁
+                        /* 在网格上取距离中心半径一定的点 */
                         var pointsAtRadius = [];
                         var getPointsAtRadius = function getPointsAtRadius(radius) {
+                            debugger
                             if (pointsAtRadius[radius]) {
                                 return pointsAtRadius[radius];
                             }
@@ -822,13 +798,15 @@
                             return points;
                         };
 
-                        /* Return true if we had spent too much time */
+                        /* 如果我们花了太多的时间，返回true */
                         var exceedTime = function exceedTime() {
+                            //  console.log('如果我们花了太多的时间，返回true');
                             return settings.abortThreshold > 0 && new Date().getTime() - escapeTime > settings.abortThreshold;
                         };
 
-                        /* Get the deg of rotation according to settings, and luck. */
+                        /* ❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️根据设定得到旋转的程度，和运气. */
                         var getRotateDeg = function getRotateDeg() {
+                            // console.log(settings.rotateRatio)
                             if (settings.rotateRatio === 0) {
                                 return 0;
                             }
@@ -849,6 +827,7 @@
                             }
                         };
 
+                        //  获取文本信息
                         var getTextInfo = function getTextInfo(word, weight, rotateDeg) {
                             // calculate the acutal font size
                             // fontSize === 0 means weightFactor function wants the text skipped,
@@ -859,79 +838,58 @@
                                 return false;
                             }
 
-                            // Scale factor here is to make sure fillText is not limited by
-                            // the minium font size set by browser.
-                            // It will always be 1 or 2n.
-                            var mu = 1;
-                            if (fontSize < minFontSize) {
-                                mu = function calculateScaleFactor() {
-                                    var mu = 2;
-                                    while (mu * fontSize < minFontSize) {
-                                        mu += 2;
-                                    }
-                                    return mu;
-                                }();
-                            }
-
-                            // Get fontWeight that will be used to set fctx.font
-                            var fontWeight;
-                            if (getTextFontWeight) {
-                                fontWeight = getTextFontWeight(word, weight, fontSize);
-                            } else {
-                                fontWeight = settings.fontWeight;
-                            }
+                            const mu = 1;
+                            const fontWeight = settings.fontWeight;
 
                             var fcanvas = document.createElement('canvas');
-                            var fctx = fcanvas.getContext('2d', {willReadFrequently: true});
+                            document.body.appendChild(fcanvas);
+                            const  fctx = fcanvas.getContext('2d', {willReadFrequently: true});
 
                             fctx.font = fontWeight + ' ' + (fontSize * mu).toString(10) + 'px ' + settings.fontFamily;
 
-                            // Estimate the dimension of the text with measureText().
-                            var fw = fctx.measureText(word).width / mu;
-                            var fh = Math.max(fontSize * mu, fctx.measureText('m').width, fctx.measureText('\uFF37').width) / mu;
+                            // 量大小
+                            var fw = (fctx.measureText(word).width / mu) | 0;
+                            var fh = (Math.max(fontSize * mu, fctx.measureText('m').width, fctx.measureText('\uFF37').width) / mu) | 0;
 
-                            // Create a boundary box that is larger than our estimates,
-                            // so text don't get cut of (it sill might)
-                            var boxWidth = fw + fh * 2;
-                            var boxHeight = fh * 3;
-                            var fgw = Math.ceil(boxWidth / g);
-                            var fgh = Math.ceil(boxHeight / g);
+                            //  创建一个比我们估计的更大的边界框，这样文本就不会被删除(它仍然可能)
+                            let boxWidth = fw + fh * 2;
+                            let boxHeight = fh * 3;
+                            const fgw = Math.ceil(boxWidth / g);
+                            const fgh = Math.ceil(boxHeight / g);
                             boxWidth = fgw * g;
                             boxHeight = fgh * g;
 
-                            // Calculate the proper offsets to make the text centered at
-                            // the preferred position.
+                            //  ❤️❤️❤️❤️❤️❤️❤️
+                            //  计算适当的偏移量，使文本位于首选位置的中心。
 
-                            // This is simply half of the width.
+                            //  这只是宽度的一半。
                             var fillTextOffsetX = -fw / 2;
-                            // Instead of moving the box to the exact middle of the preferred
-                            // position, for Y-offset we move 0.4 instead, so Latin alphabets look
-                            // vertical centered.
+                            //  不将方框移动到首选位置的精确中间位置，而是将y偏移量移动0.4，因此拉丁字母看起来垂直居中。
                             var fillTextOffsetY = -fh * 0.4;
+                            // console.log(fillTextOffsetX, fw)
 
-                            // Calculate the actual dimension of the canvas, considering the rotation.
+                            //  计算画布的实际尺寸，考虑旋转。
                             var cgh = Math.ceil((boxWidth * Math.abs(Math.sin(rotateDeg)) + boxHeight * Math.abs(Math.cos(rotateDeg))) / g);
                             var cgw = Math.ceil((boxWidth * Math.abs(Math.cos(rotateDeg)) + boxHeight * Math.abs(Math.sin(rotateDeg))) / g);
+                            // console.log(cgw, boxWidth);
+                            // console.log(cgh, boxHeight);
+                            // console.log( cgw, boxWidth)
                             var width = cgw * g;
                             var height = cgh * g;
 
+                            //  将画布设置为这么大
                             fcanvas.setAttribute('width', width);
                             fcanvas.setAttribute('height', height);
 
-                            if (debug) {
-                                // Attach fcanvas to the DOM
-                                document.body.appendChild(fcanvas);
-                                // Save it's state so that we could restore and draw the grid correctly.
-                                fctx.save();
-                            }
 
-                            // Scale the canvas with |mu|.
+
+
+                            // 用|mu|缩放画布。
                             fctx.scale(1 / mu, 1 / mu);
                             fctx.translate(width * mu / 2, height * mu / 2);
                             fctx.rotate(-rotateDeg);
 
-                            // Once the width/height is set, ctx info will be reset.
-                            // Set it again here.
+                            //  一旦宽度/高度设置好，ctx信息将被重置。在这里再次设置。
                             fctx.font = fontWeight + ' ' + (fontSize * mu).toString(10) + 'px ' + settings.fontFamily;
 
                             // Fill the text into the fcanvas.
@@ -942,22 +900,14 @@
                             // 0.5 * fontSize lower.
                             fctx.fillStyle = '#000';
                             fctx.textBaseline = 'middle';
+                            // console.log(fillTextOffsetX * mu,(fillTextOffsetY + fontSize * 0.5) * mu)
                             fctx.fillText(word, fillTextOffsetX * mu, (fillTextOffsetY + fontSize * 0.5) * mu);
 
-                            // Get the pixels of the text
-                            var imageData = fctx.getImageData(0, 0, width, height).data;
+                            const imageData = fctx.getImageData(0, 0, width, height).data;
 
-                            if (exceedTime()) {
-                                return false;
-                            }
 
-                            if (debug) {
-                                // Draw the box of the original estimation
-                                fctx.strokeRect(fillTextOffsetX * mu, fillTextOffsetY, fw * mu, fh * mu);
-                                fctx.restore();
-                            }
-
-                            // Read the pixels and save the information to the occupied array
+                            //  ❤️❤️❤️❤️❤️❤️
+                            //  读取像素并将信息保存到占用的数组中
                             var occupied = [];
                             var gx = cgw,
                                 gy,
@@ -974,7 +924,6 @@
                                             while (x--) {
                                                 if (imageData[((gy * g + y) * width + (gx * g + x)) * 4 + 3]) {
                                                     occupied.push([gx, gy]);
-
                                                     if (gx < bounds[3]) {
                                                         bounds[3] = gx;
                                                     }
@@ -988,7 +937,7 @@
                                                         bounds[2] = gy;
                                                     }
 
-                                                    if (debug) {
+                                                    if (true) {
                                                         fctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
                                                         fctx.fillRect(gx * g, gy * g, g - 0.5, g - 0.5);
                                                     }
@@ -1004,10 +953,6 @@
                                 }
                             }
 
-                            if (debug) {
-                                fctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
-                                fctx.fillRect(bounds[3] * g, bounds[0] * g, (bounds[1] - bounds[3] + 1) * g, (bounds[2] - bounds[0] + 1) * g);
-                            }
 
                             // Return information needed to create the text on the real canvas
                             return {
