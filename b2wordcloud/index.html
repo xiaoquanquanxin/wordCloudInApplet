@@ -9,7 +9,6 @@
         #chart {
             width: 200px;
             height: 200px;
-            margin: 0 auto
         }
     </style>
 </head>
@@ -21,7 +20,7 @@
 <!--    <script type="module" src="src/wordcloud2.js"></script>-->
 <!--    <script type="module" src="src/index.js"></script>-->
 <script>
-    const keywords = {
+    const originData = {
         "visualMap": 22199,
         "continuous": 10288,
         "contoller": 620,
@@ -359,6 +358,9 @@
         "textAlign": 1,
         "textBaseline": 1,
         "brush": 3
+    }
+    const keywords = {
+        ...originData
     };
     let list = []
     for (const i in keywords) {

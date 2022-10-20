@@ -30,7 +30,7 @@
     "dev:rn": "npm run build:rn -- --watch",
     "dev:qq": "npm run build:qq -- --watch",
     "dev:quickapp": "npm run build:quickapp -- --watch",
-    "prettier": "prettier  --write \"./src/**/*.{js,ts,jsx,json,tsx,vue,css,less,sass}\" "
+    "prettier": "prettier  --write \"./{src,b2wordcloud}/**/*.{js,ts,jsx,json,tsx,vue,css,less,sass}\" "
   },
   "browserslist": [
     "last 3 versions",

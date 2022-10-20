@@ -17,6 +17,7 @@ const IndexPage = () => {
   useEffect(() => {
     console.clear();
     Taro.nextTick(() => {
+      //  绘制用的canvas
       wx.createSelectorQuery()
         .select("#main-chart")
         .fields({ node: true, size: true })
@@ -25,6 +26,7 @@ const IndexPage = () => {
           const ctx = calcCanvas(canvas);
           await loadImage(canvas, ctx, canvas.width, canvas.height);
         });
+      //    文本用的canvas
       wx.createSelectorQuery()
         .select("#text-chart")
         .fields({ node: true, size: true })
@@ -39,7 +41,6 @@ const IndexPage = () => {
       {/*<Canvas type="2d" className={"chart"} id={"chart"}/>*/}
       <Canvas type="2d" className={"chart"} id="main-chart" />
       <Canvas type="2d" style={textChartSize} id="text-chart" />
-      <View>在这里⬆️⬆️⬆️⬆️</View>
     </View>
   );
 };
