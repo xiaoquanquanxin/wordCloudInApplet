@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>js词云</title>
     <style>
+
         #chart {
             width: 200px;
             height: 200px;
@@ -16,7 +17,7 @@
 <div class="test">
     <div id="chart"></div>
 </div>
-<script src="b2wordcloud.js"></script>
+<script src="b2wordcloud.js?v=11"></script>
 <!--    <script type="module" src="src/wordcloud2.js"></script>-->
 <!--    <script type="module" src="src/index.js"></script>-->
 <script>
@@ -366,10 +367,7 @@
     for (const i in keywords) {
         list.push([i, keywords[i]])
     }
-    list = list.sort((a, b) => {
-        return b[1] - a[1]
-    })
-    console.log(list);
+
     new B2wordcloud(document.getElementById("chart"), {
         list,
         color: [
@@ -380,10 +378,9 @@
             'rgb(0,0,200)',
             'rgb(0,200,200)',
         ],
-        autoFontSize: true,
-        shadowColor: 'rgba(0,0,0,0)',
         maskImage: './logo.png',
     })
+
 
 
 </script>
