@@ -99,12 +99,12 @@ function tryToPutWordAtPoint(
 export { tryToPutWordAtPoint };
 
 //  在网格上取距离中心半径一定的点,    todo    这里可以优化radius
-function getPointsAtRadius(radius, ellipticity: number, center: CenterType) {
+function getPointsAtRadius(radius: number, ellipticity: number, center: CenterType): PointsType {
   //  console.log('radius',radius);
   if (pointsAtRadius[radius]) {
     return pointsAtRadius[radius];
   }
-  const points: Array<[number, number, number]> = [];
+  const points: PointsType = [];
   if (radius === 0) {
     points.push([center[0], center[1], 0]);
   }

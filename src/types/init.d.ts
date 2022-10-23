@@ -86,3 +86,10 @@ type WordItemType = {
   rotateDeg: number;
   i: number;
 };
+
+type PointsType = Array<[number, number, number]>;
+
+//  当前半径上的点
+type PointsAtRadiusType = {
+  [key: number]: PointsType;
+};

@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { _options } from "./init.config";
+import { _OPTIONS } from "./init.config";
 import { wordCloud } from "./wordCloud";
 import logoImg from "../assets/logo.png";
 
@@ -14,7 +14,7 @@ const InitCanvas = function(
   const dpr = wx.getSystemInfoSync().pixelRatio;
   const { min, max, list } = this.getMinMaxList(keywords);
   this.options = {
-    ..._options,
+    ..._OPTIONS,
     list,
     dpr,
     min,
