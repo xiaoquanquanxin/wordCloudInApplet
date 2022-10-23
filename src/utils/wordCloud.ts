@@ -1,11 +1,11 @@
-//  词云
 import Taro from "@tarojs/taro";
 import { getPointsAtRadius, getRotateDeg, tryToPutWordAtPoint, ZoomRenderRatio } from "@utils";
 import { Dispatch, SetStateAction } from "react";
-import { drawItem } from "../utils/draw";
+import { drawItem } from "./draw";
 
+//  词云
 function wordCloud(initCanvas: InitCanvasType) {
-  const { ctx, options, textChartCtx, words, newImageData, textChartCanvas, setTextChartSize } = initCanvas;
+  const { ctx, options, textChartCtx, words, newImageData, setTextChartSize } = initCanvas;
   const { list, minFontSize, fontWeight, gridSize, fontFamily, ellipticity, drawOutOfBound } = options;
 
   //  所有函数可用的信息/对象，在start()时设置

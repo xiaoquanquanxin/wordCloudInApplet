@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { _OPTIONS } from "./init.config";
+import { _OPTIONS } from "../constants/init.config";
 import { wordCloud } from "./wordCloud";
 import logoImg from "../assets/logo.png";
 

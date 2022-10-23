@@ -1,7 +1,7 @@
 import { Canvas, View } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useEffect, useState } from "react";
-import { InitCanvas } from "../../constants/init";
+import { InitCanvas } from "../../utils/init";
 
 import "./index.scss";
 
