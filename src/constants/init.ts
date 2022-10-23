@@ -1,3 +1,5 @@
+import { _options } from "./init.config";
+import { WordCloud } from "./wordCloud";
 import logoImg from "../assets/logo.png";
 
 //  初始化
@@ -8,42 +10,8 @@ function InitCanvas(canvas, keywords) {
   });
   const dpr = wx.getSystemInfoSync().pixelRatio;
   this.options = {
+    ..._options,
     list,
-    color: ["rgb(0,200,0)", "rgb(200,0,0)", "rgb(200,200,0)", "rgb(200,0,200)", "rgb(0,0,200)", "rgb(0,200,200)"],
-    //    必须
-    fontWeight: "normal",
-    //  文本最小值
-    minSize: 2,
-
-    weightFactor: null,
-
-    //  栅格，栅格间距
-    gridSize: 4,
-    //  画出边界
-    drawOutOfBound: false,
-
-    //  画折罩
-    drawMask: false,
-
-    maskColor: "rgb(0,0,0,.2)",
-    maskGapWidth: 0.3,
-
-    minRotation: -Math.PI / 2,
-    maxRotation: Math.PI / 2,
-    rotationSteps: Math.PI / 36,
-
-    //  当前文字是旋转的概率
-    rotateRatio: 1 - 0.618,
-
-    //  用于渲染的文本的大小
-    maxFontSize: 24,
-    minFontSize: 2,
-
-    maskImage: "./logo.png",
-
-    //  0、1纯扁，
-    ellipticity: 0.618,
-
     dpr
   };
 
@@ -58,33 +26,24 @@ function InitCanvas(canvas, keywords) {
   //  图片处理后的数据
   this.newImageData = null;
 
-  //
-  // setCanvasSize(canvas)
-
-  this.getMinMax();
-  //  执行一次
-  this.fixWeightFactor();
+  this.init();
   console.log("🔩🔩🔩 options 🔩🔩🔩", this.options);
-  // await loadImage(canvas, ctx, canvas.width, canvas.height);
-
-  (async () => {
-    await this.maskImage();
-  })();
-
-  // updateCanvasMask(this._shapeCanvas, this._maskCanvas);
-  // new WordCloud(this._container, this._options, this._maskCanvas, false);
 }
-
-//  设置宽高
-// function setCanvasSize(canvas) {
-//     const width = '750px';
-//     const height = '300px'
-//     canvas.width = width;
-//     canvas.height = height;
-// }
 
 InitCanvas.prototype = {
   constructor: InitCanvas,
+  init() {
+    (async () => {
+      // setCanvasSize(canvas)
+      this.getMinMax();
+      //  执行一次
+      this.fixWeightFactor();
+      //  加载图片
+      await this.maskImage();
+      //  词云
+      new WordCloud();
+    })();
+  },
   //  最大值、最小值
   getMinMax() {
     //  排序
