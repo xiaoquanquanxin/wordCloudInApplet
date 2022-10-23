@@ -62,7 +62,7 @@ function canFitText(drawOutOfBound: boolean, gx, gy, occupied, grid, ngx, ngy) {
 //  尝试放入文字，到点位
 function tryToPutWordAtPoint(
   words: Array<WordItemType>,
-  gxy: number,
+  gxy: PointsType,
   index: number,
   info,
   grid: number,
@@ -99,12 +99,13 @@ function tryToPutWordAtPoint(
 export { tryToPutWordAtPoint };
 
 //  在网格上取距离中心半径一定的点,    todo    这里可以优化radius
-function getPointsAtRadius(radius: number, ellipticity: number, center: CenterType): PointsType {
+function getPointsAtRadius(radius: number, ellipticity: number, center: CenterType): [PointsType] {
   //  console.log('radius',radius);
   if (pointsAtRadius[radius]) {
     return pointsAtRadius[radius];
   }
-  const points: PointsType = [];
+  //  @ts-ignore
+  const points: [PointsType] = [];
   if (radius === 0) {
     points.push([center[0], center[1], 0]);
   }
