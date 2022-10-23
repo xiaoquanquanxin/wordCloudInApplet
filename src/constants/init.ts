@@ -50,8 +50,8 @@ InitCanvas.prototype = {
     const list = _list.sort((a, b) => {
       return b[1] - a[1];
     });
-    const max = this.options.list[0][1];
-    const min = this.options.list[this.options.list.length - 1][1];
+    const max = list[0][1];
+    const min = list[list.length - 1][1];
     return {
       min,
       max,
