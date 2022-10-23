@@ -1,9 +1,16 @@
+import { Dispatch, SetStateAction } from "react";
 import { _options } from "./init.config";
-import { WordCloud } from "./wordCloud";
+import { wordCloud } from "./wordCloud";
 import logoImg from "../assets/logo.png";
 
 //  初始化
-const InitCanvas = function(canvas, keywords) {
+const InitCanvas = function(
+  canvas,
+  keywords,
+  setMainChartSize: Dispatch<SetStateAction<{ width: number; height: number }>>,
+  textChart: any,
+  setTextChartSize: Dispatch<SetStateAction<{ width: number; height: number }>>
+) {
   const dpr = wx.getSystemInfoSync().pixelRatio;
   const { min, max, list } = this.getMinMaxList(keywords);
   this.options = {
@@ -27,6 +34,13 @@ const InitCanvas = function(canvas, keywords) {
 
   this.init();
   console.log("🔩🔩🔩 options 🔩🔩🔩", this.options);
+
+  //  回调，main-chart 画布大小的调整
+  this.setMainChartSize = setMainChartSize;
+
+  //  文本 text-chart 相关
+  this.textChart = textChart;
+  this.setTextChartSize = setTextChartSize;
 };
 
 InitCanvas.prototype = {
@@ -37,7 +51,7 @@ InitCanvas.prototype = {
       //  加载图片
       await this.maskImage();
       //  词云
-      new WordCloud(this);
+      wordCloud(this);
     })();
   },
   //  最大值、最小值、数据
@@ -60,19 +74,19 @@ InitCanvas.prototype = {
   },
   //  设置字母权重
   weightFactor(val: number): number {
-    const { maxFontSize, minFontSize } = this.options;
-    const subDomain = this.max - this.min;
+    const { maxFontSize, minFontSize, max, min } = this.options;
+    const subDomain = max - min;
     const subRange = maxFontSize - minFontSize;
     if (subDomain === 0) {
       return subRange === 0 ? minFontSize : (minFontSize + maxFontSize) / 2;
     }
-    if (val === this.min) {
+    if (val === min) {
       return minFontSize;
     }
-    if (val === this.max) {
+    if (val === max) {
       return maxFontSize;
     }
-    return ((val - this.min) / subDomain) * subRange + minFontSize;
+    return ((val - min) / subDomain) * subRange + minFontSize;
   },
   //  折罩图片
   async maskImage(): Promise<any> {

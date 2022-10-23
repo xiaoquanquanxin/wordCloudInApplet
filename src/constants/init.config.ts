@@ -18,14 +18,15 @@ const ngxData = {
 export { g, fontSize, ngxData, fontFamily };
 
 // 默认值将被options对象覆盖
-const _options = {
+const _options: OptionsType = {
   color: ["rgb(0,200,0)", "rgb(200,0,0)", "rgb(200,200,0)", "rgb(200,0,200)", "rgb(0,0,200)", "rgb(0,200,200)"],
   //    必须
   fontWeight: "normal",
-  //  文本最小值
-  minSize: 2,
 
-  weightFactor: null,
+  //  用于渲染的-文本最小值
+  minFontSize: 2,
+  //  用于渲染的-文本最大值
+  maxFontSize: 24,
 
   //  栅格，栅格间距
   gridSize: 4,
@@ -45,14 +46,15 @@ const _options = {
   //  当前文字是旋转的概率
   rotateRatio: 1 - 0.618,
 
-  //  用于渲染的文本的大小
-  maxFontSize: 24,
-  minFontSize: 2,
-
+  //  图片地址
   maskImage: "./logo.png",
 
-  //  0、1纯扁，
-  ellipticity: 0.618
+  //  0、1纯扁，0.5最圆
+  ellipticity: 0.618,
+
+  //  👇👇👇动态载入的
+  list: [],
+  dpr: 0
 };
 const pointsAtRadius = {};
 
