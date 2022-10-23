@@ -3,21 +3,20 @@ import { WordCloud } from "./wordCloud";
 import logoImg from "../assets/logo.png";
 
 //  初始化
-function InitCanvas(canvas, keywords) {
-  const list: Array<Array<number>> = [];
-  Reflect.ownKeys(keywords).forEach(index => {
-    list.push([index, keywords[index]]);
-  });
+const InitCanvas = function(canvas, keywords) {
   const dpr = wx.getSystemInfoSync().pixelRatio;
+  const { min, max, list } = this.getMinMaxList(keywords);
   this.options = {
     ..._options,
     list,
-    dpr
+    dpr,
+    min,
+    max
   };
 
   canvas.width *= dpr;
   canvas.height *= dpr;
-  this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+  this.ctx = canvas.getContext("2d");
   this.canvas = canvas;
   this._shapeCanvas = null;
 
@@ -28,51 +27,52 @@ function InitCanvas(canvas, keywords) {
 
   this.init();
   console.log("🔩🔩🔩 options 🔩🔩🔩", this.options);
-}
+};
 
 InitCanvas.prototype = {
   constructor: InitCanvas,
   init() {
     (async () => {
       // setCanvasSize(canvas)
-      this.getMinMax();
-      //  执行一次
-      this.fixWeightFactor();
       //  加载图片
       await this.maskImage();
       //  词云
-      new WordCloud();
+      new WordCloud(this);
     })();
   },
-  //  最大值、最小值
-  getMinMax() {
+  //  最大值、最小值、数据
+  getMinMaxList(keywords: { [key: string]: number }): { max: number; min: number; list: List } {
+    const _list: List = [];
+    Reflect.ownKeys(keywords).forEach((index: string) => {
+      _list.push([index, keywords[index]]);
+    });
     //  排序
-    this.options.list = this.options.list.sort((a, b) => {
+    const list = _list.sort((a, b) => {
       return b[1] - a[1];
     });
     const max = this.options.list[0][1];
     const min = this.options.list[this.options.list.length - 1][1];
-    this.options.max = max;
-    this.options.min = min;
+    return {
+      min,
+      max,
+      list
+    };
   },
   //  设置字母权重
-  fixWeightFactor() {
-    //  映射最大最小值大关系
-    this.options.weightFactor = function(val) {
-      const { maxFontSize, minFontSize } = this.options;
-      const subDomain = this.max - this.min;
-      const subRange = maxFontSize - minFontSize;
-      if (subDomain === 0) {
-        return subRange === 0 ? minFontSize : (minFontSize + maxFontSize) / 2;
-      }
-      if (val === this.min) {
-        return minFontSize;
-      }
-      if (val === this.max) {
-        return maxFontSize;
-      }
-      return ((val - this.min) / subDomain) * subRange + minFontSize;
-    };
+  weightFactor(val: number): number {
+    const { maxFontSize, minFontSize } = this.options;
+    const subDomain = this.max - this.min;
+    const subRange = maxFontSize - minFontSize;
+    if (subDomain === 0) {
+      return subRange === 0 ? minFontSize : (minFontSize + maxFontSize) / 2;
+    }
+    if (val === this.min) {
+      return minFontSize;
+    }
+    if (val === this.max) {
+      return maxFontSize;
+    }
+    return ((val - this.min) / subDomain) * subRange + minFontSize;
   },
   //  折罩图片
   async maskImage(): Promise<any> {
