@@ -8,7 +8,7 @@ const InitCanvas = function(
   canvas,
   keywords,
   setMainChartSize: Dispatch<SetStateAction<{ width: number; height: number }>>,
-  textChart: any,
+  textChartCanvas: any,
   setTextChartSize: Dispatch<SetStateAction<{ width: number; height: number }>>
 ) {
   const dpr = wx.getSystemInfoSync().pixelRatio;
@@ -23,7 +23,7 @@ const InitCanvas = function(
 
   canvas.width *= dpr;
   canvas.height *= dpr;
-  this.ctx = canvas.getContext("2d");
+  this.ctx = canvas.getContext("2d", { willReadFrequently: true });
   this.canvas = canvas;
   this._shapeCanvas = null;
 
@@ -39,8 +39,11 @@ const InitCanvas = function(
   this.setMainChartSize = setMainChartSize;
 
   //  文本 text-chart 相关
-  this.textChart = textChart;
+  this.textChartCanvas = textChartCanvas;
+  this.textChartCtx = textChartCanvas.getContext("2d", { willReadFrequently: true });
   this.setTextChartSize = setTextChartSize;
+
+  this.words = [];
 };
 
 InitCanvas.prototype = {
