@@ -130,30 +130,10 @@ InitCanvas.prototype = {
     for (let i = 0; i < this.imageData.data.length; i += 4) {
       const tone = this.imageData.data[i] + this.imageData.data[i + 1] + this.imageData.data[i + 2];
       const alpha = this.imageData.data[i + 3];
-      if (alpha < 128 || tone > 128 * 3) {
-        // Area to draw
-        newImageData.data[i] = newImageData.data[i + 1] = newImageData.data[i + 2] = 0;
-        newImageData.data[i + 3] = 255;
-      } else {
-        // Area not to draw
-        newImageData.data[i] = newImageData.data[i + 1] = newImageData.data[i + 2] = 255;
-        newImageData.data[i + 3] = 0;
-      }
+      newImageData.data[i + 3] = 255;
+      newImageData.data[i] = newImageData.data[i + 1] = newImageData.data[i + 2] = alpha < 128 || tone > 128 * 3 ? 0 : 255;
     }
-
-    const _newImageData = this.ctx.createImageData(this.imageData);
-    for (let i = 0; i < newImageData.data.length; i += 4) {
-      //  不透明度
-      _newImageData.data[i + 3] = 255;
-      if (newImageData.data[i + 3] > 128) {
-        //  最后就是取这个白色的部分
-        _newImageData.data[i] = _newImageData.data[i + 1] = _newImageData.data[i + 2] = 0;
-      } else {
-        //  而黑色的部分就不取了
-        _newImageData.data[i] = _newImageData.data[i + 1] = _newImageData.data[i + 2] = 255;
-      }
-    }
-    this.newImageData = _newImageData;
+    this.newImageData = newImageData;
   }
 };
 
