@@ -11,6 +11,7 @@ function ZoomRenderRatio(initCanvas: InitCanvasType) {
 
 //  ❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️根据设定得到旋转的程度，和运气
 function getRotateDeg(options: OptionsType): number {
+  return 0;
   if (options.rotateRatio === 0) {
     return 0;
   }
@@ -76,6 +77,16 @@ function tryToPutWordAtPoint(
 ): WordItemType | false {
   const gx = Math.floor(gxy[0] - info.gw / 2);
   const gy = Math.floor(gxy[1] - info.gh / 2);
+
+  console.log("gxy", gxy);
+  console.log("index", index);
+  console.log("info", info);
+  // console.log("grid", grid);
+  // console.log("grid", JSON.stringify(grid));
+  console.log("ngx", ngx);
+  console.log("ngy", ngy);
+  debugger;
+
   //  如果我们不能在这个位置放入文本，返回false并到下一个位置。
   if (!canFitText(drawOutOfBound, gx, gy, info.occupied, grid, ngx, ngy)) {
     return false;
@@ -100,6 +111,7 @@ export { tryToPutWordAtPoint };
 
 //  在网格上取距离中心半径一定的点,    todo    这里可以优化radius
 function getPointsAtRadius(radius: number, ellipticity: number, center: CenterType): [PointsType] {
+  console.log("center", center);
   //  console.log('radius',radius);
   if (pointsAtRadius[radius]) {
     return pointsAtRadius[radius];
@@ -125,3 +137,58 @@ function getPointsAtRadius(radius: number, ellipticity: number, center: CenterTy
 }
 
 export { getPointsAtRadius };
+
+//  计算格子的数据
+const calcGridData = (
+  //  图片原数据
+  newImageData: ImageData,
+  //  列
+  ngx: number,
+  //  行
+  ngy: number,
+  //  格子大小
+  gridSize: number
+): Array<Array<boolean>> => {
+  const grid: Array<Array<boolean>> = [];
+  const bgPixel = [255, 255, 255, 255];
+  let y: number;
+  let x: number;
+  let i: number;
+  let gx: number = ngx;
+  let gy: number;
+  while (gx--) {
+    grid[gx] = [];
+    gy = ngy;
+    while (gy--) {
+      y = gridSize;
+      grid[gx][gy] = true;
+      singleGridLoop: while (y--) {
+        x = gridSize;
+        while (x--) {
+          i = 4;
+          while (i--) {
+            const key = ((gy * gridSize + y) * ngx * gridSize + (gx * gridSize + x)) * 4 + i;
+            const value = newImageData.data[key];
+            if (value === undefined) {
+              debugger;
+            }
+            if (value !== bgPixel[i]) {
+              grid[gx][gy] = false;
+              break singleGridLoop;
+            }
+          }
+        }
+      }
+    }
+  }
+  return grid;
+};
+
+export { calcGridData };
+
+//  获得 gridSize 的整数倍
+const gridSizeTimes = (gridSize: number, value: number): number => {
+  return Math.ceil(value / gridSize) * gridSize;
+};
+
+export { gridSizeTimes };

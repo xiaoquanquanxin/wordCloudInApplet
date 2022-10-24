@@ -1,14 +1,12 @@
 import Taro from "@tarojs/taro";
-import { getPointsAtRadius, getRotateDeg, tryToPutWordAtPoint, ZoomRenderRatio } from "@utils";
+import { calcGridData, getPointsAtRadius, getRotateDeg, tryToPutWordAtPoint, ZoomRenderRatio } from "@utils";
 import { Dispatch, SetStateAction } from "react";
 import { drawItem } from "./draw";
 
 //  词云
 function wordCloud(initCanvas: InitCanvasType) {
-  const { ctx, options, textChartCtx, words, newImageData, setTextChartSize } = initCanvas;
-  const { list, minFontSize, fontWeight, gridSize, fontFamily, ellipticity, drawOutOfBound } = options;
-
-  //  所有函数可用的信息/对象，在start()时设置
+  const { ctx, options, textChartCtx, words, newImageData, textChartCanvas, setTextChartSize } = initCanvas;
+  const { list, minFontSize, fontWeight, gridSize, fontFamily, ellipticity, drawOutOfBound, dpr } = options;
 
   // 包含填充信息的2d数组
   let grid;
@@ -25,8 +23,6 @@ function wordCloud(initCanvas: InitCanvasType) {
   //  获取文本信息
   function getTextInfo(word: string, weight: number, rotateDeg: number) {
     //  计算实际字体大小
-    // fontSize === 0表示权重因子函数希望跳过文本，
-    // size < minSize表示无法绘制文本。
     const fontSize = initCanvas.weightFactor(weight);
     //  console.log("fontSize", fontSize);
     //  console.log("minFontSize", minFontSize);
@@ -40,11 +36,16 @@ function wordCloud(initCanvas: InitCanvasType) {
     const fw = (textChartCtx.measureText(word).width / mu) | 0;
     const fh = (Math.max(fontSize * mu, textChartCtx.measureText("m").width, textChartCtx.measureText("\uFF37").width) / mu) | 0;
 
-    const fgw = Math.ceil(fw + (fh * 2) / gridSize);
-    const fgh = Math.ceil((fh * 3) / gridSize);
-    //  创建一个比我们估计的更大的边界框，这样文本就不会被删除(它仍然可能)
-    const boxWidth = fgw * gridSize;
-    const boxHeight = fgh * gridSize;
+    let boxWidth = fw + fh * 2;
+    let boxHeight = fh * 3;
+    const fgw = Math.ceil(boxWidth / gridSize);
+    const fgh = Math.ceil(boxHeight / gridSize);
+    boxWidth = fgw * gridSize;
+    boxHeight = fgh * gridSize;
+
+    // console.log(boxWidth)
+    // console.log(boxHeight)
+    // debugger;
 
     //  ❤️❤️❤️❤️❤️❤️❤️
     //  计算适当的偏移量，使文本位于首选位置的中心。
@@ -57,12 +58,17 @@ function wordCloud(initCanvas: InitCanvasType) {
 
     //  计算画布的实际尺寸，考虑旋转。
     const cgh = Math.ceil((boxWidth * Math.abs(Math.sin(rotateDeg)) + boxHeight * Math.abs(Math.cos(rotateDeg))) / gridSize);
+    // console.log(cgh);
     const cgw = Math.ceil((boxWidth * Math.abs(Math.cos(rotateDeg)) + boxHeight * Math.abs(Math.sin(rotateDeg))) / gridSize);
     // console.log(cgw, boxWidth);
     // console.log(cgh, boxHeight);
     // console.log( cgw, boxWidth)
     const width = cgw * gridSize;
     const height = cgh * gridSize;
+    // console.log("width", width);
+    // console.log("height", height);
+    textChartCanvas.height = height;
+    textChartCanvas.width = width;
 
     //  设置文本canvas宽高
     (setTextChartSize as Dispatch<SetStateAction<{ width: number; height: number }>>)({ width, height });
@@ -78,8 +84,13 @@ function wordCloud(initCanvas: InitCanvasType) {
     //  将文本填充到fcanvas中。
     textChartCtx.fillStyle = "#000";
     textChartCtx.textBaseline = "middle";
-    // console.log(fillTextOffsetX * mu,(fillTextOffsetY + fontSize * 0.5) * mu)
-    textChartCtx.fillText(word, fillTextOffsetX * mu, (fillTextOffsetY + fontSize * 0.5) * mu);
+    (() => {
+      const x = fillTextOffsetX * mu;
+      const y = (fillTextOffsetY + fontSize * 0.5) * mu;
+      // console.log('x',x)
+      // console.log('y',y)
+      textChartCtx.fillText(word, Math.ceil(x), Math.ceil(y));
+    })();
 
     const textCanvasImageData = textChartCtx.getImageData(0, 0, width, height).data;
 
@@ -92,6 +103,12 @@ function wordCloud(initCanvas: InitCanvasType) {
     let y: number;
 
     const bounds: [number, number, number, number] = [cgh / 2, cgw / 2, cgh / 2, cgw / 2];
+    // console.log("bounds", bounds);
+    // console.log("gx", gx);
+    // console.log("gridSize", gridSize);
+    // console.log("cgh", cgh);
+    // console.log("cgw", cgw);
+    // console.log("textCanvasImageData", JSON.stringify(textCanvasImageData));
     while (gx--) {
       gy = cgh;
       while (gy--) {
@@ -131,6 +148,8 @@ function wordCloud(initCanvas: InitCanvasType) {
       }
     }
 
+    // console.log("bounds", bounds);
+
     // console.log('word',word);
     // console.log('occupied',occupied);
 
@@ -160,6 +179,7 @@ function wordCloud(initCanvas: InitCanvasType) {
 
     //  获取文本信息
     const info = getTextInfo(word, weight, rotateDeg);
+    console.log("海咲野 ❤️", info.occupied);
 
     //  如果drawOutOfBound设置为false，如果我们已经知道word的边框大于画布，则跳过循环。
     if (!initCanvas.options.drawOutOfBound) {
@@ -177,6 +197,7 @@ function wordCloud(initCanvas: InitCanvasType) {
 
     while (r--) {
       const points = getPointsAtRadius(maxRadius - r, ellipticity, center);
+      console.log("points", points);
       //  试着看每一个点来匹配单词。
       //  array.some()将停止并在putWordAtPoint()返回true时返回true。
       //  如果所有点都返回false，则array.some()返回false。
@@ -191,6 +212,7 @@ function wordCloud(initCanvas: InitCanvasType) {
         }
       }
       if (drawn) {
+        debugger;
         return drawn;
       }
     }
@@ -200,9 +222,12 @@ function wordCloud(initCanvas: InitCanvasType) {
 
   //  开始在画布上画画  只执行一次✅
   function start() {
+    //  todo  这里不对
     //  对于维数，clearCanvas等，我们只关心第一个元素。
-    ngx = Math.ceil(initCanvas.canvas.width / gridSize);
-    ngy = Math.ceil(initCanvas.canvas.height / gridSize);
+    ngx = Math.ceil(750 / dpr / gridSize);
+    ngy = Math.ceil(636 / dpr / gridSize);
+    console.log("ngx", ngx);
+    console.log("ngy", ngy);
 
     console.log("寻找空间的最大半径");
     //  确定词云的中心
@@ -219,38 +244,18 @@ function wordCloud(initCanvas: InitCanvasType) {
 
     const bgPixel = [255, 255, 255, 255];
 
+    // return;
+    console.clear();
     //  读取画布的像素，我们要告诉画布的哪个部分是空的。
-
-    gx = ngx;
-    let x, y;
-    let i = 0;
-    while (gx--) {
-      grid[gx] = [];
-      gy = ngy;
-      while (gy--) {
-        y = gridSize;
-        singleGridLoop: while (y--) {
-          x = gridSize;
-          while (x--) {
-            i = 4;
-            while (i--) {
-              if (newImageData.data[((gy * gridSize + y) * ngx * gridSize + (gx * gridSize + x)) * 4 + i] !== bgPixel[i]) {
-                grid[gx][gy] = false;
-                break singleGridLoop;
-              }
-            }
-          }
-        }
-        if (grid[gx][gy] !== false) {
-          grid[gx][gy] = true;
-        }
-      }
-    }
-
-    //  console.log('grid', JSON.stringify(grid));
+    //  todo  研究这里
+    grid = calcGridData(newImageData, ngx, ngy, gridSize);
+    console.log("grid--------", grid);
+    // console.log("grid----", grid);
 
     //  放大绘画比例，使得更清晰
     ZoomRenderRatio(initCanvas);
+
+    //  console.log('grid', JSON.stringify(grid));
 
     //  ------------------------------遍历每一个文字------------------------------
     (() => {
@@ -264,10 +269,14 @@ function wordCloud(initCanvas: InitCanvasType) {
         //  方文字
         const drawn = putWord(list[i], i);
         if (drawn) {
-          //  console.log("drawn", drawn);
+          console.log("drawn", drawn);
+          console.log("info", drawn.info);
           //  画元素
           drawItem(ctx, options, drawn, grid, ngx, ngy);
         }
+
+        //  todo
+        return;
 
         i++;
         Taro.nextTick(loop);

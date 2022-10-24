@@ -50,16 +50,33 @@ function drawText(ctx: CanvasRenderingContext2D, options: OptionsType, gx, gy, i
   //在打乱当前状态之前保存当前状态
   ctx.save();
   ctx.scale(1 / mu, 1 / mu);
+  ctx.textBaseline = "middle";
   // 支持阴影
   ctx.font = options.fontWeight + " " + (info.fontSize * mu).toString(10) + "px " + options.fontFamily;
   ctx.fillStyle = options.color[(options.color.length * Math.random()) | 0];
   //  将画布位置转换为文本应该放置的原始坐标。
-  ctx.translate((gx + info.gw / 2) * options.gridSize * mu, (gy + info.gh / 2) * options.gridSize * mu);
+  (() => {
+    //  gw 短了
+    console.log("gx", gx);
+    const x = (gx + info.gw / 2) * options.gridSize * mu;
+    const y = (gy + info.gh / 2) * options.gridSize * mu;
+    console.log("x", x);
+    console.log("y", y);
+    ctx.translate(x, y);
+  })();
+
   //  旋转是必须的
   //  console.log('rotateDeg',rotateDeg)
   ctx.rotate(-rotateDeg);
-  ctx.textBaseline = "middle";
-  ctx.fillText(word, info.fillTextOffsetX * mu, (info.fillTextOffsetY + info.fontSize * 0.5) * mu);
+
+  (() => {
+    const x = info.fillTextOffsetX * mu;
+    const y = (info.fillTextOffsetY + info.fontSize * 0.5) * mu;
+    console.log("x", x);
+    console.log("y", y);
+    ctx.fillText(word, x, y);
+  })();
+
   //恢复状态。
   ctx.restore();
 }

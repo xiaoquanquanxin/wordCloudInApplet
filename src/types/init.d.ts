@@ -42,6 +42,9 @@ type OptionsType = {
   drawMask: boolean;
   maskColor: string;
   maskGapWidth: number;
+
+  //  图片数据
+  imageData: ImageData;
 };
 //  数据
 type List = Array<[string, number]>;
@@ -87,9 +90,9 @@ type WordItemType = {
   i: number;
 };
 
-type PointsType = Array<[number, number, number]>;
+type PointsType = [number, number, number];
 
 //  当前半径上的点
 type PointsAtRadiusType = {
-  [key: number]: PointsType;
+  [key: number]: [PointsType];
 };

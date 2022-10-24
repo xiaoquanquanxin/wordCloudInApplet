@@ -2,6 +2,8 @@ import { Dispatch, SetStateAction } from "react";
 import { _OPTIONS } from "../constants/init.config";
 import { wordCloud } from "./wordCloud";
 import logoImg from "../assets/logo.png";
+import Taro from "@tarojs/taro";
+import { gridSizeTimes } from "./index";
 
 //  初始化
 const InitCanvas = function(
@@ -21,11 +23,8 @@ const InitCanvas = function(
     max
   };
 
-  canvas.width *= dpr;
-  canvas.height *= dpr;
-  this.ctx = canvas.getContext("2d", { willReadFrequently: true });
   this.canvas = canvas;
-  this._shapeCanvas = null;
+  this.ctx = canvas.getContext("2d", { willReadFrequently: true });
 
   //  图片原始数据
   this.imageData = null;
@@ -50,7 +49,6 @@ InitCanvas.prototype = {
   constructor: InitCanvas,
   init() {
     (async () => {
-      // setCanvasSize(canvas)
       //  加载图片
       await this.maskImage();
       //  词云
@@ -97,13 +95,31 @@ InitCanvas.prototype = {
       const image = this.canvas.createImage();
       image.src = logoImg;
       image.onload = () => {
-        const { width, height } = this.canvas;
+        const { naturalHeight, naturalWidth } = image;
+        const { gridSize } = this.options;
+        // const { dpr } = this.options;
+        const { windowWidth } = Taro.getSystemInfoSync();
+        const dpr = windowWidth / naturalWidth;
+        // console.log(dpr*2)
+        const height = gridSizeTimes(gridSize, naturalHeight * dpr);
+        const width = gridSizeTimes(gridSize, naturalWidth * dpr);
+        console.log(width, height);
+        this.canvas.width = width;
+        this.canvas.height = height;
+
+        const ngx = Math.ceil(750 / dpr / gridSize);
+        const ngy = Math.ceil(636 / dpr / gridSize);
+        console.log("ngx", ngx);
+        console.log("ngy", ngy);
+
         // 将图片绘制到 canvas 上
         this.ctx.drawImage(image, 0, 0, width, height);
         this.imageData = this.ctx.getImageData(0, 0, width, height);
+        //  console.log('this.imageData',this.imageData.data);
         //  将图片映射到canvas上
         this.mapImageData();
-        this.ctx.putImageData(this.newImageData, 0, 0, 0, 0, width, height);
+        this.ctx.putImageData(this.newImageData, 0, 0);
+        console.log("this.newImageData.length", this.newImageData.data.length);
         resolve(this.newImageData);
       };
     });
@@ -114,16 +130,30 @@ InitCanvas.prototype = {
     for (let i = 0; i < this.imageData.data.length; i += 4) {
       const tone = this.imageData.data[i] + this.imageData.data[i + 1] + this.imageData.data[i + 2];
       const alpha = this.imageData.data[i + 3];
-      //  这里直接取反了
       if (alpha < 128 || tone > 128 * 3) {
+        // Area to draw
         newImageData.data[i] = newImageData.data[i + 1] = newImageData.data[i + 2] = 0;
         newImageData.data[i + 3] = 255;
       } else {
+        // Area not to draw
         newImageData.data[i] = newImageData.data[i + 1] = newImageData.data[i + 2] = 255;
-        newImageData.data[i + 3] = 255;
+        newImageData.data[i + 3] = 0;
       }
     }
-    this.newImageData = newImageData;
+
+    const _newImageData = this.ctx.createImageData(this.imageData);
+    for (let i = 0; i < newImageData.data.length; i += 4) {
+      //  不透明度
+      _newImageData.data[i + 3] = 255;
+      if (newImageData.data[i + 3] > 128) {
+        //  最后就是取这个白色的部分
+        _newImageData.data[i] = _newImageData.data[i + 1] = _newImageData.data[i + 2] = 0;
+      } else {
+        //  而黑色的部分就不取了
+        _newImageData.data[i] = _newImageData.data[i + 1] = _newImageData.data[i + 2] = 255;
+      }
+    }
+    this.newImageData = _newImageData;
   }
 };
 
