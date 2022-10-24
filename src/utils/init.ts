@@ -96,30 +96,34 @@ InitCanvas.prototype = {
       image.src = logoImg;
       image.onload = () => {
         const { naturalHeight, naturalWidth } = image;
+        //  图片宽高比
+        const aspectRatio = naturalWidth / naturalHeight;
+        console.log("图片宽高比", aspectRatio);
         const { gridSize } = this.options;
-        // const { dpr } = this.options;
         const { windowWidth } = Taro.getSystemInfoSync();
         const dpr = windowWidth / naturalWidth;
-        // console.log(dpr*2)
+        // console.log(dpr)
         const height = gridSizeTimes(gridSize, naturalHeight * dpr);
         const width = gridSizeTimes(gridSize, naturalWidth * dpr);
         console.log(width, height);
         this.canvas.width = width;
         this.canvas.height = height;
+        console.log("pic wid", windowWidth);
+        console.log("pic hei", windowWidth / aspectRatio);
 
-        const ngx = Math.ceil(750 / dpr / gridSize);
-        const ngy = Math.ceil(636 / dpr / gridSize);
+        const ngx = Math.ceil(windowWidth / dpr / gridSize);
+        const ngy = Math.ceil(windowWidth / aspectRatio / dpr / gridSize);
         console.log("ngx", ngx);
         console.log("ngy", ngy);
 
         // 将图片绘制到 canvas 上
         this.ctx.drawImage(image, 0, 0, width, height);
         this.imageData = this.ctx.getImageData(0, 0, width, height);
-        //  console.log('this.imageData',this.imageData.data);
+        // console.log('this.imageData',this.imageData.data);
         //  将图片映射到canvas上
         this.mapImageData();
         this.ctx.putImageData(this.newImageData, 0, 0);
-        console.log("this.newImageData.length", this.newImageData.data.length);
+        console.log("❗️❗️❗️❗️❗️❗️❗️", this.newImageData.data);
         resolve(this.newImageData);
       };
     });

@@ -2,11 +2,14 @@
 import { pointsAtRadius } from "../constants/init.config";
 
 function ZoomRenderRatio(initCanvas: InitCanvasType) {
-  const { options, setMainChartSize, width, height } = initCanvas;
+  const { options, canvas, setMainChartSize } = initCanvas;
   const dpr = options.dpr;
+  const { width, height } = canvas;
+  // console.log(initCanvas);
+  console.log(width, height, dpr);
   //  放大
-  setMainChartSize({ width: width * dpr, height: height * dpr });
-  initCanvas.ctx.scale(dpr, dpr);
+  // setMainChartSize({ width: width * dpr, height: height * dpr });
+  // initCanvas.ctx.scale(dpr, dpr);
 }
 
 //  ❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️根据设定得到旋转的程度，和运气
@@ -78,14 +81,14 @@ function tryToPutWordAtPoint(
   const gx = Math.floor(gxy[0] - info.gw / 2);
   const gy = Math.floor(gxy[1] - info.gh / 2);
 
-  console.log("gxy", gxy);
-  console.log("index", index);
-  console.log("info", info);
-  // console.log("grid", grid);
-  // console.log("grid", JSON.stringify(grid));
-  console.log("ngx", ngx);
-  console.log("ngy", ngy);
-  debugger;
+  // console.log('入参⬇️')
+  // console.log('gxy',gxy)
+  // console.log('index',index)
+  // console.log('info',info)
+  // console.log('grid',grid)
+  // console.log('ngx',ngx)
+  // console.log('ngy',ngy)
+  // console.log('入参⬆️')
 
   //  如果我们不能在这个位置放入文本，返回false并到下一个位置。
   if (!canFitText(drawOutOfBound, gx, gy, info.occupied, grid, ngx, ngy)) {
@@ -111,7 +114,7 @@ export { tryToPutWordAtPoint };
 
 //  在网格上取距离中心半径一定的点,    todo    这里可以优化radius
 function getPointsAtRadius(radius: number, ellipticity: number, center: CenterType): [PointsType] {
-  console.log("center", center);
+  // console.log("center", center);
   //  console.log('radius',radius);
   if (pointsAtRadius[radius]) {
     return pointsAtRadius[radius];

@@ -179,7 +179,7 @@ function wordCloud(initCanvas: InitCanvasType) {
 
     //  获取文本信息
     const info = getTextInfo(word, weight, rotateDeg);
-    console.log("海咲野 ❤️", info.occupied);
+    // console.log("海咲野 ❤️", info.occupied);
 
     //  如果drawOutOfBound设置为false，如果我们已经知道word的边框大于画布，则跳过循环。
     if (!initCanvas.options.drawOutOfBound) {
@@ -197,7 +197,7 @@ function wordCloud(initCanvas: InitCanvasType) {
 
     while (r--) {
       const points = getPointsAtRadius(maxRadius - r, ellipticity, center);
-      console.log("points", points);
+      // console.log("points", points);
       //  试着看每一个点来匹配单词。
       //  array.some()将停止并在putWordAtPoint()返回true时返回true。
       //  如果所有点都返回false，则array.some()返回false。
@@ -212,7 +212,6 @@ function wordCloud(initCanvas: InitCanvasType) {
         }
       }
       if (drawn) {
-        debugger;
         return drawn;
       }
     }
@@ -226,8 +225,8 @@ function wordCloud(initCanvas: InitCanvasType) {
     //  对于维数，clearCanvas等，我们只关心第一个元素。
     ngx = Math.ceil(750 / dpr / gridSize);
     ngy = Math.ceil(636 / dpr / gridSize);
-    console.log("ngx", ngx);
-    console.log("ngy", ngy);
+    // console.log("ngx", ngx);
+    // console.log("ngy", ngy);
 
     console.log("寻找空间的最大半径");
     //  确定词云的中心
@@ -237,21 +236,11 @@ function wordCloud(initCanvas: InitCanvasType) {
     //  寻找空间的最大半径
     maxRadius = Math.floor(Math.sqrt(ngx * ngx + ngy * ngy));
     //  只在设置了clearCanvas时清除画布，如果没有，则更新网格到当前画布状态
-    grid = [];
 
-    let gx;
-    let gy;
-
-    const bgPixel = [255, 255, 255, 255];
-
-    // return;
-    console.clear();
+    //  todo  需要刷新画布
     //  读取画布的像素，我们要告诉画布的哪个部分是空的。
-    //  todo  研究这里
     grid = calcGridData(newImageData, ngx, ngy, gridSize);
     console.log("grid--------", grid);
-    // console.log("grid----", grid);
-
     //  放大绘画比例，使得更清晰
     ZoomRenderRatio(initCanvas);
 
@@ -269,14 +258,17 @@ function wordCloud(initCanvas: InitCanvasType) {
         //  方文字
         const drawn = putWord(list[i], i);
         if (drawn) {
-          console.log("drawn", drawn);
-          console.log("info", drawn.info);
+          // console.log('出参⬇️')
+          // console.log("drawn", drawn);
+          // console.log("info", drawn.info);
+          // console.log('出参⬆️')
+          // return;
           //  画元素
           drawItem(ctx, options, drawn, grid, ngx, ngy);
         }
 
         //  todo
-        return;
+        // return;
 
         i++;
         Taro.nextTick(loop);

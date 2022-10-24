@@ -38,13 +38,22 @@ function drawItem(ctx: CanvasRenderingContext2D, options: OptionsType, drawn: Wo
   //  实际上把文本放到画布上
   drawText(ctx, options, drawn.gx, drawn.gy, drawn.info, drawn.word, drawn.rotateDeg);
   //  将网格上的空格标记为已填充
+  //  todo
   updateGrid(ctx, options, drawn.gx, drawn.gy, drawn.info, grid, ngx, ngy);
 }
 
 export { drawItem };
 
 // ✅实际在网格上绘制文本
-function drawText(ctx: CanvasRenderingContext2D, options: OptionsType, gx, gy, info, word, rotateDeg) {
+function drawText(ctx: CanvasRenderingContext2D, options: OptionsType, gx: number, gy: number, info: any, word: string, rotateDeg: number) {
+  // console.log('入参⬇️')
+  // console.log('gx',gx)
+  // console.log('gy',gy)
+  // console.log('info',info)
+  // console.log('word',word)
+  // console.log('rotateDeg',rotateDeg)
+  // console.log('入参⬆️')
+  // return
   //  获取用于设置ctx的fontWeight。字体和字体样式规则
   const mu = info.mu;
   //在打乱当前状态之前保存当前状态
@@ -57,11 +66,11 @@ function drawText(ctx: CanvasRenderingContext2D, options: OptionsType, gx, gy, i
   //  将画布位置转换为文本应该放置的原始坐标。
   (() => {
     //  gw 短了
-    console.log("gx", gx);
+    // console.log("gx", gx);
     const x = (gx + info.gw / 2) * options.gridSize * mu;
     const y = (gy + info.gh / 2) * options.gridSize * mu;
-    console.log("x", x);
-    console.log("y", y);
+    // console.log("x", x);
+    // console.log("y", y);
     ctx.translate(x, y);
   })();
 
@@ -72,8 +81,8 @@ function drawText(ctx: CanvasRenderingContext2D, options: OptionsType, gx, gy, i
   (() => {
     const x = info.fillTextOffsetX * mu;
     const y = (info.fillTextOffsetY + info.fontSize * 0.5) * mu;
-    console.log("x", x);
-    console.log("y", y);
+    // console.log("x", x);
+    // console.log("y", y);
     ctx.fillText(word, x, y);
   })();
 
