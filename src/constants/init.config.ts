@@ -9,9 +9,9 @@ const _OPTIONS: OptionsType = {
   fontFamily: "Arial",
 
   //  用于渲染的-文本最小值
-  minFontSize: 2,
+  minFontSize: 4,
   //  用于渲染的-文本最大值
-  maxFontSize: 24,
+  maxFontSize: 64,
 
   //  栅格，栅格间距
   gridSize: 4,
