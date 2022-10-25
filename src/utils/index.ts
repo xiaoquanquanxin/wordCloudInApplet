@@ -153,7 +153,7 @@ const calcGridData = (
   gridSize: number
 ): Array<Array<boolean>> => {
   const grid: Array<Array<boolean>> = [];
-  const bgPixel = [255, 255, 255, 255];
+  const bgPixel = 255;
   let y: number;
   let x: number;
   let i: number;
@@ -175,7 +175,7 @@ const calcGridData = (
             if (value === undefined) {
               debugger;
             }
-            if (value !== bgPixel[i]) {
+            if (value !== bgPixel) {
               grid[gx][gy] = false;
               break singleGridLoop;
             }

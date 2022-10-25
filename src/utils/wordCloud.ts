@@ -1,11 +1,11 @@
 import Taro from "@tarojs/taro";
-import { calcGridData, getPointsAtRadius, getRotateDeg, tryToPutWordAtPoint, ZoomRenderRatio } from "@utils";
+import { getPointsAtRadius, getRotateDeg, tryToPutWordAtPoint, ZoomRenderRatio } from "@utils";
 import { Dispatch, SetStateAction } from "react";
 import { drawItem } from "./draw";
 
 //  词云
 function wordCloud(initCanvas: InitCanvasType) {
-  const { ctx, options, textChartCtx, words, newImageData, textChartCanvas, setTextChartSize, ngx, ngy, grid } = initCanvas;
+  const { ctx, options, textChartCtx, words, textChartCanvas, setTextChartSize, ngx, ngy, grid } = initCanvas;
   const { list, minFontSize, fontWeight, gridSize, fontFamily, ellipticity, drawOutOfBound, dpr } = options;
 
   let maxRadius = 0;
@@ -216,13 +216,11 @@ function wordCloud(initCanvas: InitCanvasType) {
   //  开始在画布上画画  只执行一次✅
   function start() {
     //  todo  这里不对
-    // console.log("ngx", ngx);
-    // console.log("ngy", ngy);
-
     console.log("寻找空间的最大半径");
     //  确定词云的中心
     center[0] = ngx / 2;
     center[1] = ngy / 2;
+    console.log("center", center);
 
     //  寻找空间的最大半径
     maxRadius = Math.floor(Math.sqrt(ngx * ngx + ngy * ngy));
