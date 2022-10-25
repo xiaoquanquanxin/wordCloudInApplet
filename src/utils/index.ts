@@ -173,7 +173,7 @@ const calcGridData = (
             const key = ((gy * gridSize + y) * ngx * gridSize + (gx * gridSize + x)) * 4 + i;
             const value = newImageData.data[key];
             if (value === undefined) {
-              debugger;
+              throw '算错了'
             }
             if (value !== bgPixel) {
               grid[gx][gy] = false;
