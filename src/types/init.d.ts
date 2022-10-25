@@ -1,5 +1,7 @@
 //  配置
 type OptionsType = {
+  //  屏幕宽度
+  windowWidth: number;
   //  颜色
   color: Array<string>;
   //  字重

@@ -1,8 +1,8 @@
 //  放大绘画比例，使得更清晰
-import { pointsAtRadius } from "../constants/init.config";
+import { _OPTIONS, pointsAtRadius } from "../constants/init.config";
 
 function ZoomRenderRatio(initCanvas: InitCanvasType) {
-  const { options, canvas, setMainChartSize } = initCanvas;
+  const { options, canvas } = initCanvas;
   const dpr = options.dpr;
   const { width, height } = canvas;
   // console.log(initCanvas);
@@ -173,7 +173,7 @@ const calcGridData = (
             const key = ((gy * gridSize + y) * ngx * gridSize + (gx * gridSize + x)) * 4 + i;
             const value = newImageData.data[key];
             if (value === undefined) {
-              throw '算错了'
+              throw "算错了";
             }
             if (value !== bgPixel) {
               grid[gx][gy] = false;
@@ -195,3 +195,29 @@ const gridSizeTimes = (gridSize: number, value: number): number => {
 };
 
 export { gridSizeTimes };
+
+//  计算数据的最大值、最小值；组织数据；组织
+const getMinMaxList = (keywords: { [key: string]: number }): { max: number; min: number; list: List; maxFontSize: number; minFontSize: number } => {
+  const _list: List = [];
+  Reflect.ownKeys(keywords).forEach((index: string) => {
+    _list.push([index, keywords[index]]);
+  });
+  //  排序
+  const list = _list.sort((a, b) => {
+    return b[1] - a[1];
+  });
+  const max = list[0][1];
+  const min = list[list.length - 1][1];
+  const maxFontSize = (_OPTIONS.windowWidth / 5) | 0;
+  const minFontSize = (max / min) | 0 || 1;
+  console.log("maxFontSize", maxFontSize);
+  console.log("minFontSize", minFontSize);
+  return {
+    min,
+    max,
+    list,
+    maxFontSize,
+    minFontSize
+  };
+};
+export { getMinMaxList };

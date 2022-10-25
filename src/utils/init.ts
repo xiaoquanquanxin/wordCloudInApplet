@@ -1,9 +1,9 @@
 import { Dispatch, SetStateAction } from "react";
+import Taro from "@tarojs/taro";
 import { _OPTIONS } from "../constants/init.config";
 import { wordCloud } from "./wordCloud";
-import logoImg from "../assets/logo.png";
-import Taro from "@tarojs/taro";
-import { gridSizeTimes } from "./index";
+import { calcGridData, getMinMaxList, gridSizeTimes } from "./index";
+const logoImg = "http://192.168.199.138:8080/logo.png";
 
 //  初始化
 const InitCanvas = function(
@@ -13,10 +13,12 @@ const InitCanvas = function(
   textChartCanvas: any,
   setTextChartSize: Dispatch<SetStateAction<{ width: number; height: number }>>
 ) {
-  const dpr = wx.getSystemInfoSync().pixelRatio;
-  const { min, max, list } = this.getMinMaxList(keywords);
+  const dpr = Taro.getSystemInfoSync().pixelRatio;
+  const { min, max, list, minFontSize, maxFontSize } = getMinMaxList(keywords);
   this.options = {
     ..._OPTIONS,
+    maxFontSize,
+    minFontSize,
     list,
     dpr,
     min,
@@ -28,8 +30,6 @@ const InitCanvas = function(
 
   //  图片原始数据
   this.imageData = null;
-  //  图片处理后的数据
-  this.newImageData = null;
 
   this.init();
   console.log("🔩🔩🔩 options 🔩🔩🔩", this.options);
@@ -39,6 +39,7 @@ const InitCanvas = function(
 
   //  文本 text-chart 相关
   this.textChartCanvas = textChartCanvas;
+  console.log("//  文本 text-chart 相关", textChartCanvas);
   this.textChartCtx = textChartCanvas.getContext("2d", { willReadFrequently: true });
   this.setTextChartSize = setTextChartSize;
 
@@ -54,24 +55,6 @@ InitCanvas.prototype = {
       //  词云
       wordCloud(this);
     })();
-  },
-  //  最大值、最小值、数据
-  getMinMaxList(keywords: { [key: string]: number }): { max: number; min: number; list: List } {
-    const _list: List = [];
-    Reflect.ownKeys(keywords).forEach((index: string) => {
-      _list.push([index, keywords[index]]);
-    });
-    //  排序
-    const list = _list.sort((a, b) => {
-      return b[1] - a[1];
-    });
-    const max = list[0][1];
-    const min = list[list.length - 1][1];
-    return {
-      min,
-      max,
-      list
-    };
   },
   //  设置字母权重
   weightFactor(val: number): number {
@@ -94,36 +77,42 @@ InitCanvas.prototype = {
     return new Promise(resolve => {
       const image = this.canvas.createImage();
       image.src = logoImg;
-      image.onload = () => {
+      image.onload = e => {
+        console.log("e", e);
+        console.log("logoImg,", logoImg);
+        console.log("image", image);
         const { naturalHeight, naturalWidth } = image;
         //  图片宽高比
         const aspectRatio = naturalWidth / naturalHeight;
         console.log("图片宽高比", aspectRatio);
-        const { gridSize } = this.options;
-        const { windowWidth } = Taro.getSystemInfoSync();
+        const { gridSize, windowWidth } = this.options;
         const dpr = windowWidth / naturalWidth;
-        // console.log(dpr)
-        const height = gridSizeTimes(gridSize, naturalHeight * dpr);
         const width = gridSizeTimes(gridSize, naturalWidth * dpr);
-        console.log(width, height);
+        const height = gridSizeTimes(gridSize, naturalHeight * dpr);
         this.canvas.width = width;
         this.canvas.height = height;
-        console.log("pic wid", windowWidth);
-        console.log("pic hei", windowWidth / aspectRatio);
+        console.log("canvas width", width);
+        console.log("canvas height", height);
+        this.setMainChartSize({ width: width + "px", height: height + "px" });
 
-        const ngx = Math.ceil(windowWidth / dpr / gridSize);
-        const ngy = Math.ceil(windowWidth / aspectRatio / dpr / gridSize);
-        console.log("ngx", ngx);
-        console.log("ngy", ngy);
+        const ngx = Math.ceil(width / gridSize);
+        const ngy = Math.ceil(height / gridSize);
+        this.ngx = ngx;
+        this.ngy = ngy;
+        console.log("格子数量ngx", ngx);
+        console.log("格子数量ngy", ngy);
 
         // 将图片绘制到 canvas 上
         this.ctx.drawImage(image, 0, 0, width, height);
         this.imageData = this.ctx.getImageData(0, 0, width, height);
-        // console.log('this.imageData',this.imageData.data);
+        console.log("this.imageData", this.imageData.data.length);
         //  将图片映射到canvas上
         this.mapImageData();
         this.ctx.putImageData(this.newImageData, 0, 0);
-        console.log("❗️❗️❗️❗️❗️❗️❗️", this.newImageData.data);
+        // console.log("❗️❗️❗️❗️❗️❗️❗️", this.newImageData.data);
+        //  读取画布的像素，我们要告诉画布的哪个部分是空的。
+        this.grid = calcGridData(this.newImageData, ngx, ngy, gridSize);
+        // console.log('gird',grid);
         resolve(this.newImageData);
       };
     });

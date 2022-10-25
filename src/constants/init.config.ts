@@ -1,5 +1,10 @@
+import Taro from "@tarojs/taro";
+const { windowWidth } = Taro.getSystemInfoSync();
+
 // 默认值将被options对象覆盖
 const _OPTIONS: OptionsType = {
+  //  屏幕宽度
+  windowWidth,
   //  颜色
   color: ["rgb(0,200,0)", "rgb(200,0,0)", "rgb(200,200,0)", "rgb(200,0,200)", "rgb(0,0,200)", "rgb(0,200,200)"],
   //  字重
@@ -9,9 +14,9 @@ const _OPTIONS: OptionsType = {
   fontFamily: "Arial",
 
   //  用于渲染的-文本最小值
-  minFontSize: 4,
+  minFontSize: 0,
   //  用于渲染的-文本最大值
-  maxFontSize: 64,
+  maxFontSize: 0,
 
   //  栅格，栅格间距
   gridSize: 4,

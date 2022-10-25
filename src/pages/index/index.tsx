@@ -1,12 +1,11 @@
-import { Canvas, View, Image } from "@tarojs/components";
+import { Canvas, View } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useEffect, useState } from "react";
 import { InitCanvas } from "../../utils/init";
-// import logoImg from "../../assets/logo.png";
 import "./index.scss";
 
 const IndexPage = () => {
-  const [mainChartSize, setMainChartSize] = useState({ width: "100%" });
+  const [mainChartSize, setMainChartSize] = useState({ width: 0, height: 0 });
   const [textChartSize, setTextChartSize] = useState({ width: 100, height: 100 });
 
   useEffect(() => {
@@ -33,14 +32,14 @@ const IndexPage = () => {
       ]);
 
       //  初始化
-      const initCanvas = new InitCanvas(mainChart, (originData as any).default, setMainChartSize, textChart, setTextChartSize);
+      new InitCanvas(mainChart, (originData as any).default, setMainChartSize, textChart, setTextChartSize);
     });
   }, []);
   return (
     <View>
       {/*<Image src={logoImg}/>*/}
       <Canvas type="2d" style={mainChartSize} className="chart" id="main-chart" />
-      <Canvas type="2d" style={textChartSize} id="text-chart" />
+      <Canvas type="2d" className={"text-chart"} style={textChartSize} id="text-chart" />
     </View>
   );
 };
