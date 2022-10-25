@@ -6,7 +6,7 @@ import { drawItem } from "./draw";
 //  词云
 function wordCloud(initCanvas: InitCanvasType) {
   const { ctx, options, textChartCtx, words, textChartCanvas, setTextChartSize, ngx, ngy, grid } = initCanvas;
-  const { list, minFontSize, fontWeight, gridSize, fontFamily, ellipticity, drawOutOfBound, dpr } = options;
+  const { list, minFontSize, fontWeight, gridSize, fontFamily, ellipticity, drawOutOfBound } = options;
 
   let maxRadius = 0;
   // 云中心的位置
@@ -215,19 +215,14 @@ function wordCloud(initCanvas: InitCanvasType) {
 
   //  开始在画布上画画  只执行一次✅
   function start() {
-    //  todo  这里不对
-    console.log("寻找空间的最大半径");
     //  确定词云的中心
     center[0] = ngx / 2;
     center[1] = ngy / 2;
-    console.log("center", center);
+    console.log("寻找空间的最大半径,center", center);
 
     //  寻找空间的最大半径
     maxRadius = Math.floor(Math.sqrt(ngx * ngx + ngy * ngy));
     //  只在设置了clearCanvas时清除画布，如果没有，则更新网格到当前画布状态
-
-    //  todo  需要刷新画布
-    return;
 
     console.log("grid--------", grid);
     //  放大绘画比例，使得更清晰
