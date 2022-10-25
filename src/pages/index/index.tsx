@@ -6,11 +6,10 @@ import { InitCanvas } from "../../utils/init";
 import "./index.scss";
 
 const IndexPage = () => {
+  const [mainChartSize, setMainChartSize] = useState({ width: "100%" });
   const [textChartSize, setTextChartSize] = useState({ width: 100, height: 100 });
-  const [mainChartSize, setMainChartSize] = useState({ width: 750, height: 400 });
 
   useEffect(() => {
-    console.clear();
     Taro.nextTick(async () => {
       const [originData, mainChart, textChart] = await Promise.all([
         //    加载数据
@@ -33,13 +32,13 @@ const IndexPage = () => {
         })
       ]);
 
+      //  初始化
       const initCanvas = new InitCanvas(mainChart, (originData as any).default, setMainChartSize, textChart, setTextChartSize);
-      console.log(initCanvas);
     });
   }, []);
   return (
     <View>
-      <Canvas type="2d" style={mainChartSize} className={"chart"} id="main-chart" />
+      <Canvas type="2d" style={mainChartSize} className="chart" id="main-chart" />
       <Canvas type="2d" style={textChartSize} id="text-chart" />
     </View>
   );
