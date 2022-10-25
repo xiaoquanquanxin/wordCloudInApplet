@@ -209,7 +209,7 @@ const getMinMaxList = (keywords: { [key: string]: number }): { max: number; min:
   const max = list[0][1];
   const min = list[list.length - 1][1];
   const maxFontSize = (_OPTIONS.windowWidth / 5) | 0;
-  const minFontSize = (max / min) | 0 || 1;
+  const minFontSize = (min / max) | 0 || 1;
   console.log("maxFontSize", maxFontSize);
   console.log("minFontSize", minFontSize);
   return {
