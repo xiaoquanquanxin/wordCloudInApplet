@@ -1,8 +1,8 @@
-import { Canvas, View } from "@tarojs/components";
+import { Canvas, View, Image } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useEffect, useState } from "react";
 import { InitCanvas } from "../../utils/init";
-
+// import logoImg from "../../assets/logo.png";
 import "./index.scss";
 
 const IndexPage = () => {
@@ -38,6 +38,7 @@ const IndexPage = () => {
   }, []);
   return (
     <View>
+      {/*<Image src={logoImg}/>*/}
       <Canvas type="2d" style={mainChartSize} className="chart" id="main-chart" />
       <Canvas type="2d" style={textChartSize} id="text-chart" />
     </View>

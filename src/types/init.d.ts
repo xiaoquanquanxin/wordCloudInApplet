@@ -56,8 +56,8 @@ type InitCanvasType = {
   //  上下文
   ctx: CanvasRenderingContext2D;
   //  宽高
-  width: number;
-  height: number;
+  // width: number;
+  // height: number;
   newImageData: ImageData;
   //  配置
   options: OptionsType;
@@ -73,6 +73,13 @@ type InitCanvasType = {
 
   //  执行相关 🚄🚄
   words: Array<WordItemType>;
+
+  //  格子列数
+  ngx: number;
+  //  格子行数
+  ngy: number;
+  //  格子数据
+  grid: Array<Array<boolean>>;
 };
 
 //  中心点
