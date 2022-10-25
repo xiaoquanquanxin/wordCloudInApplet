@@ -107,18 +107,19 @@ InitCanvas.prototype = {
         this.imageData = this.ctx.getImageData(0, 0, width, height);
         console.log("this.imageData", this.imageData.data.length);
         //  将图片映射到canvas上
-        this.mapImageData();
-        this.ctx.putImageData(this.newImageData, 0, 0);
+        const newImageData = this.mapImageData();
+        this.ctx.putImageData(newImageData, 0, 0);
         // console.log("❗️❗️❗️❗️❗️❗️❗️", this.newImageData.data);
         //  读取画布的像素，我们要告诉画布的哪个部分是空的。
-        this.grid = calcGridData(this.newImageData, ngx, ngy, gridSize);
+        this.grid = calcGridData(newImageData, ngx, ngy, gridSize);
+        this.ctx.clearRect(0, 0, width, height);
         // console.log('gird',grid);
-        resolve(this.newImageData);
+        resolve(newImageData);
       };
     });
   },
   //  将图片映射到canvas上
-  mapImageData(): void {
+  mapImageData(): ImageData {
     const newImageData = this.ctx.createImageData(this.imageData);
     for (let i = 0; i < this.imageData.data.length; i += 4) {
       const tone = this.imageData.data[i] + this.imageData.data[i + 1] + this.imageData.data[i + 2];
@@ -126,7 +127,7 @@ InitCanvas.prototype = {
       newImageData.data[i + 3] = 255;
       newImageData.data[i] = newImageData.data[i + 1] = newImageData.data[i + 2] = alpha < 128 || tone > 128 * 3 ? 0 : 255;
     }
-    this.newImageData = newImageData;
+    return newImageData;
   }
 };
 
