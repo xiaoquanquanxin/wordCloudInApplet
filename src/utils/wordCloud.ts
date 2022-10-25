@@ -5,14 +5,8 @@ import { drawItem } from "./draw";
 
 //  词云
 function wordCloud(initCanvas: InitCanvasType) {
-  const { ctx, options, textChartCtx, words, newImageData, textChartCanvas, setTextChartSize } = initCanvas;
+  const { ctx, options, textChartCtx, words, newImageData, textChartCanvas, setTextChartSize, ngx, ngy, grid } = initCanvas;
   const { list, minFontSize, fontWeight, gridSize, fontFamily, ellipticity, drawOutOfBound, dpr } = options;
-
-  // 包含填充信息的2d数组
-  let grid;
-  // 网格的宽度和高度
-  let ngx = 0;
-  let ngy = 0;
 
   let maxRadius = 0;
   // 云中心的位置
@@ -222,9 +216,6 @@ function wordCloud(initCanvas: InitCanvasType) {
   //  开始在画布上画画  只执行一次✅
   function start() {
     //  todo  这里不对
-    //  对于维数，clearCanvas等，我们只关心第一个元素。
-    ngx = Math.ceil(750 / dpr / gridSize);
-    ngy = Math.ceil(636 / dpr / gridSize);
     // console.log("ngx", ngx);
     // console.log("ngy", ngy);
 
@@ -238,8 +229,8 @@ function wordCloud(initCanvas: InitCanvasType) {
     //  只在设置了clearCanvas时清除画布，如果没有，则更新网格到当前画布状态
 
     //  todo  需要刷新画布
-    //  读取画布的像素，我们要告诉画布的哪个部分是空的。
-    grid = calcGridData(newImageData, ngx, ngy, gridSize);
+    return;
+
     console.log("grid--------", grid);
     //  放大绘画比例，使得更清晰
     ZoomRenderRatio(initCanvas);
