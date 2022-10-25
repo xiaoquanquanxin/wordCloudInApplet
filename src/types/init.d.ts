@@ -42,9 +42,6 @@ type OptionsType = {
   drawMask: boolean;
   maskColor: string;
   maskGapWidth: number;
-
-  //  图片数据
-  imageData: ImageData;
 };
 //  数据
 type List = Array<[string, number]>;
@@ -55,12 +52,12 @@ type InitCanvasType = {
   canvas: any;
   //  上下文
   ctx: CanvasRenderingContext2D;
-  //  宽高
-  // width: number;
-  // height: number;
-  newImageData: ImageData;
   //  配置
   options: OptionsType;
+
+  //  图片数据
+  imageData: ImageData;
+
   weightFactor: (val: number) => number;
 
   //  回调，main-chart 画布大小的调整
