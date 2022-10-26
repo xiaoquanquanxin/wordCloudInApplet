@@ -34,11 +34,10 @@ function updateGrid(elementsCtx, options: OptionsType, gx, gy, info, grid, ngx, 
 }
 
 //  ✅   难点
-function drawItem(ctx: CanvasRenderingContext2D, options: OptionsType, drawn: WordItemType, grid: number, ngx: number, ngy: number) {
+function drawItem(ctx: CanvasRenderingContext2D, options: OptionsType, drawn: WordItemType, grid: InitCanvasType["grid"], ngx: number, ngy: number) {
   //  实际上把文本放到画布上
   drawText(ctx, options, drawn.gx, drawn.gy, drawn.info, drawn.word, drawn.rotateDeg);
   //  将网格上的空格标记为已填充
-  //  todo
   updateGrid(ctx, options, drawn.gx, drawn.gy, drawn.info, grid, ngx, ngy);
 }
 

@@ -1,6 +1,6 @@
-//  放大绘画比例，使得更清晰
 import { _OPTIONS, pointsAtRadius } from "../constants/init.config";
 
+//  放大绘画比例，使得更清晰
 function ZoomRenderRatio(initCanvas: InitCanvasType) {
   const { options, canvas } = initCanvas;
   const dpr = options.dpr;
@@ -69,7 +69,7 @@ function tryToPutWordAtPoint(
   gxy: PointsType,
   index: number,
   info,
-  grid: number,
+  grid: InitCanvasType["grid"],
   ngx: number,
   ngy: number,
   word: string,
@@ -152,7 +152,7 @@ const calcGridData = (
   //  格子大小
   gridSize: number
 ): Array<Array<boolean>> => {
-  const grid: Array<Array<boolean>> = [];
+  const grid: InitCanvasType["grid"] = [];
   const bgPixel = 255;
   let y: number;
   let x: number;
@@ -221,3 +221,21 @@ const getMinMaxList = (keywords: { [key: string]: number }): { max: number; min:
   };
 };
 export { getMinMaxList };
+
+//  文本权重
+const weightFactor = (val: number, options: OptionsType): number => {
+  const { maxFontSize, minFontSize, max, min } = options;
+  const subDomain = max - min;
+  const subRange = maxFontSize - minFontSize;
+  if (subDomain === 0) {
+    return subRange === 0 ? minFontSize : (minFontSize + maxFontSize) / 2;
+  }
+  if (val === min) {
+    return minFontSize;
+  }
+  if (val === max) {
+    return maxFontSize;
+  }
+  return ((val - min) / subDomain) * subRange + minFontSize;
+};
+export { weightFactor };

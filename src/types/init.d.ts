@@ -35,6 +35,11 @@ type OptionsType = {
 
   //  数据
   list: List;
+  //  最大值
+  max: number;
+  //  最小值
+  min: number;
+
   //  比例
   dpr: number;
 
@@ -59,8 +64,6 @@ type InitCanvasType = {
 
   //  图片数据
   imageData: ImageData;
-
-  weightFactor: (val: number) => number;
 
   //  回调，main-chart 画布大小的调整
   setMainChartSize: any;

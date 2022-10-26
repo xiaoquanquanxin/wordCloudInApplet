@@ -1,5 +1,5 @@
 import Taro from "@tarojs/taro";
-import { getPointsAtRadius, getRotateDeg, tryToPutWordAtPoint, ZoomRenderRatio } from "@utils";
+import { getPointsAtRadius, getRotateDeg, tryToPutWordAtPoint, weightFactor, ZoomRenderRatio } from "@utils";
 import { Dispatch, SetStateAction } from "react";
 import { drawItem } from "./draw";
 
@@ -17,7 +17,7 @@ function wordCloud(initCanvas: InitCanvasType) {
   //  获取文本信息
   function getTextInfo(word: string, weight: number, rotateDeg: number) {
     //  计算实际字体大小
-    const fontSize = initCanvas.weightFactor(weight);
+    const fontSize = weightFactor(weight, options);
     //  console.log("fontSize", fontSize);
     //  console.log("minFontSize", minFontSize);
     if (fontSize <= minFontSize) {

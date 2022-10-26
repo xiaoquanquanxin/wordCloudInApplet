@@ -3,7 +3,7 @@ import Taro from "@tarojs/taro";
 import { _OPTIONS } from "../constants/init.config";
 import { wordCloud } from "./wordCloud";
 import { calcGridData, getMinMaxList, gridSizeTimes } from "./index";
-const logoImg = "http://192.168.199.138:8080/logo.png";
+import logoImg from "../assets/logo.png";
 
 //  初始化
 const InitCanvas = function(
@@ -55,22 +55,6 @@ InitCanvas.prototype = {
       //  词云
       wordCloud(this);
     })();
-  },
-  //  设置字母权重
-  weightFactor(val: number): number {
-    const { maxFontSize, minFontSize, max, min } = this.options;
-    const subDomain = max - min;
-    const subRange = maxFontSize - minFontSize;
-    if (subDomain === 0) {
-      return subRange === 0 ? minFontSize : (minFontSize + maxFontSize) / 2;
-    }
-    if (val === min) {
-      return minFontSize;
-    }
-    if (val === max) {
-      return maxFontSize;
-    }
-    return ((val - min) / subDomain) * subRange + minFontSize;
   },
   //  折罩图片
   async maskImage(): Promise<any> {
